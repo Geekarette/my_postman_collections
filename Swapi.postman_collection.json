@@ -1,0 +1,128 @@
+{
+	"info": {
+		"_postman_id": "3dcf9b99-c057-4e8c-8065-6f0fccf8de39",
+		"name": "Swapi",
+		"description": "Test with Star Wars API : https://swapi.dev/",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Luke",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "69c5edac-fdf5-44a0-a948-8468c2f66508",
+						"exec": [
+							"const dataArray = [\r",
+							"    \"1\",\r",
+							"    \"2\",\r",
+							"    \"3\"\r",
+							"];\r",
+							"\r",
+							"let item = pm.environment.get(\"n_people\");\r",
+							"console.log(\"ITEM = \" + item);\r",
+							"console.log(\"PEOPLE ID = \" + dataArray[item]);\r",
+							"pm.environment.set(\"people_number\", dataArray[item]);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "7e75f35e-1291-4a03-a0ad-a7d26ad2592e",
+						"exec": [
+							"// get the n_people value\r",
+							"let item = pm.environment.get(\"n_people\");\r",
+							"console.log(\"TEST item = \" + item);\r",
+							"// increment n_people value\r",
+							"pm.environment.set(\"n_people\", Number(item) + 1);\r",
+							"// Get JSON response\r",
+							"//let jsonData = pm.response.json();\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"// Save old responseData value\r",
+							"var old = pm.environment.get(\"responseData\");\r",
+							"// Convert to JSON\r",
+							"old = JSON.parse(old);\r",
+							"// Get response body\r",
+							"var jsonBody = JSON.parse(responseBody);\r",
+							"// Print response body in Console (debug)\r",
+							"console.log(jsonBody);\r",
+							"// Push jsonBody in old (old now contains old+current)\r",
+							"old.push(jsonBody);\r",
+							"// Convert old to string\r",
+							"var all = JSON.stringify(old);\r",
+							"// Save all in environment\r",
+							"pm.environment.set(\"responseData\", all);\r",
+							"// Print responseData new value\r",
+							"console.log(pm.environment.get(\"responseData\"));\r",
+							"\r",
+							"// -------- The data to be written to file\r",
+							"let dataToFile = {\r",
+							"    requestName: request.name || request.url,\r",
+							"    fileExtension: 'json',\r",
+							"    responseData: pm.environment.get(\"responseData\")\r",
+							"};\r",
+							"\r",
+							"pm.sendRequest({\r",
+							"    url: 'http://localhost:3000/write',\r",
+							"    method: 'POST',\r",
+							"    header: 'Content-Type:application/json',\r",
+							"    body: {\r",
+							"        mode: 'raw',\r",
+							"        raw: JSON.stringify(dataToFile)\r",
+							"    }\r",
+							"}, function(err, res) {\r",
+							"    console.log(res);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{base_url}}people/{{people_number}}",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}people"
+					],
+					"path": [
+						"{{people_number}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "9ba7ba70-a7f9-46f1-bab7-b86c2df08d36",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "18d95fe5-1620-493a-acbb-63c93f7e24c6",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
